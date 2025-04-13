@@ -170,56 +170,34 @@
   </footer>
 
   <script>
-    function mostrarEstadisticas() {
-      // Obtener el nombre del Youtuber que el usuario ingresa
+    const apiKey = 'TU_API_KEY_DE_YOUTUBE'; // Reemplaza con tu API Key de YouTube
+
+    async function getEstadisticasDeYoutuber(nombre) {
+      const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&forUsername=${nombre}&key=${apiKey}`;
+      const respuesta = await fetch(url);
+      const data = await respuesta.json();
+      
+      if (data.items && data.items.length > 0) {
+        return data.items[0].statistics;
+      } else {
+        return null;
+      }
+    }
+
+    async function mostrarEstadisticas() {
       const nombre = document.getElementById("nombreYoutuber").value.toLowerCase();
+      const stats = await getEstadisticasDeYoutuber(nombre);
 
-      // Declarar las estadísticas de los Youtubers
-      let youtuberData = {
-        "mrbeast": {
-          nombre: "MrBeast",
-          suscriptores: "250 millones",
-          videos: "800+",
-          ganancias: "$1.5M - $24M/mes",
-          vistas: "20B+"
-        },
-        "auronplay": {
-          nombre: "AuronPlay",
-          suscriptores: "30 millones",
-          videos: "1.000+",
-          ganancias: "$50K - $800K/mes",
-          vistas: "8B+"
-        },
-        "pewdiepie": {
-          nombre: "PewDiePie",
-          suscriptores: "110 millones",
-          videos: "4.500+",
-          ganancias: "$80K - $1.2M/mes",
-          vistas: "28B+"
-        },
-        "dantdm": {
-          nombre: "DanTDM",
-          suscriptores: "30 millones",
-          videos: "3.000+",
-          ganancias: "$30K - $500K/mes",
-          vistas: "11B+"
-        },
-        // Agrega más Youtubers aquí
-      };
+      if (stats) {
+        document.getElementById("youtuberNombre").textContent = nombre.charAt(0).toUpperCase() + nombre.slice(1);
+        document.getElementById("suscriptores").textContent = "Suscriptores: " + stats.subscriberCount;
+        document.getElementById("videos").textContent = "Videos: " + stats.videoCount;
+        document.getElementById("ganancias").textContent = "Ganancias Estimadas: $1,000 - $20,000/mes"; // Estimación, debe ser calculada con otra fórmula si tienes acceso
+        document.getElementById("vistas").textContent = "Vistas Totales: " + stats.viewCount;
 
-      // Mostrar los datos del youtuber
-      if (youtuberData[nombre]) {
-        document.getElementById("youtuberNombre").textContent = youtuberData[nombre].nombre;
-        document.getElementById("suscriptores").textContent = "Suscriptores: " + youtuberData[nombre].suscriptores;
-        document.getElementById("videos").textContent = "Videos: " + youtuberData[nombre].videos;
-        document.getElementById("ganancias").textContent = youtuberData[nombre].ganancias;
-        document.getElementById("vistas").textContent = youtuberData[nombre].vistas;
-
-        // Mostrar la sección de estadísticas
         document.getElementById("estados").style.display = "block";
       } else {
-        // Si el Youtuber no está en la lista
-        alert("No tenemos estadísticas para este Youtuber.");
+        alert("Youtuber no encontrado o no tiene suficientes datos.");
         document.getElementById("estados").style.display = "none";
       }
     }
