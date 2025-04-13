@@ -1,213 +1,126 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Estadísticas de Youtubers</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #2b2b2b, #1e1e1e);
-      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e1e;
+      color: #ffffff;
       margin: 0;
       padding: 0;
       text-align: center;
     }
 
-    h1 {
-      color: #ff0000;
-      margin-top: 30px;
-      font-size: 36px;
+    .container {
+      padding: 40px;
     }
 
-    .input-container {
-      margin: 20px;
-    }
-
-    input[type="text"] {
-      padding: 12px;
-      font-size: 18px;
+    input {
+      padding: 10px;
       width: 250px;
-      border: none;
       border-radius: 5px;
-      background-color: #333;
-      color: #fff;
+      border: none;
+      margin-bottom: 10px;
     }
 
     button {
-      padding: 12px 24px;
-      font-size: 18px;
-      background-color: #ff0000;
+      padding: 10px 20px;
+      background-color: #ff004f;
+      color: white;
       border: none;
       border-radius: 5px;
-      color: #fff;
       cursor: pointer;
-      transition: background-color 0.3s;
     }
 
     button:hover {
-      background-color: #ff3300;
+      background-color: #ff3366;
     }
 
-    .youtuber {
-      background: #292929;
-      border-radius: 12px;
-      margin: 20px;
-      padding: 20px;
-      max-width: 800px;
-      width: 90%;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      display: none;
+    .result-box {
+      margin-top: 30px;
     }
 
-    .youtuber h2 {
-      color: #ff9900;
-      font-size: 28px;
-    }
-
-    .youtuber p {
-      font-size: 18px;
-      margin: 10px 0;
-    }
-
-    table {
-      width: 100%;
-      margin-top: 20px;
-      border-collapse: collapse;
-      color: #fff;
-    }
-
-    table th, table td {
-      padding: 12px;
-      border: 1px solid #444;
-      text-align: center;
-    }
-
-    table th {
-      background-color: #333;
-    }
-
-    table td {
-      background-color: #292929;
-    }
-
-    .profile-image {
-      border-radius: 50%;
+    .result-box img {
       width: 120px;
       height: 120px;
-      margin-bottom: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
     }
 
     footer {
-      margin-top: 40px;
-      padding: 20px;
-      background-color: #333;
-      color: #fff;
-      font-size: 16px;
-      border-radius: 10px;
-      max-width: 400px;
-      width: 80%;
-      margin-left: auto;
-      margin-right: auto;
+      margin-top: 50px;
     }
 
     footer a {
-      color: #e1306c;
+      color: #ff4081;
       text-decoration: none;
       font-weight: bold;
-      transition: color 0.3s ease;
     }
 
     footer a:hover {
-      color: #ff66a5;
-    }
-
-    @media screen and (max-width: 600px) {
-      h1 {
-        font-size: 28px;
-      }
-
-      .youtuber {
-        width: 95%;
-      }
-
-      footer {
-        font-size: 14px;
-      }
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>Estadísticas de Youtubers</h1>
+  <div class="container">
+    <h1>Buscar Estadísticas de Youtubers</h1>
+    <input type="text" id="inputYoutuber" placeholder="Escribe el nombre del youtuber (ej: mrbeast)">
+    <br>
+    <button onclick="buscarYoutuber()">Buscar</button>
 
-  <!-- Campo de búsqueda -->
-  <div class="input-container">
-    <input type="text" id="nombreYoutuber" placeholder="Escribe el nombre del Youtuber">
-    <button onclick="mostrarEstadisticas()">Buscar</button>
+    <div id="resultado" class="result-box"></div>
+
+    <footer>
+      <a href="https://instagram.com/el_wawin_" target="_blank">Credits: @el_wawin_</a>
+    </footer>
   </div>
-
-  <!-- Estadísticas de los Youtubers -->
-  <div id="estados" class="youtuber">
-    <img id="perfilImagen" class="profile-image" src="" alt="Imagen del Youtuber">
-    <h2 id="youtuberNombre"></h2>
-    <p id="suscriptores"></p>
-    <p id="videos"></p>
-    <p id="descripcion"></p>
-
-    <!-- Tabla de estadísticas -->
-    <table>
-      <tr>
-        <th>Estadísticas</th>
-        <th>Detalles</th>
-      </tr>
-      <tr>
-        <td>Ganancias estimadas</td>
-        <td id="ganancias"></td>
-      </tr>
-      <tr>
-        <td>Vistas totales</td>
-        <td id="vistas"></td>
-      </tr>
-    </table>
-  </div>
-
-  <footer>
-    <p>Credits: <a href="https://instagram.com/el_wawin_" target="_blank">@el_wawin_</a></p>
-  </footer>
 
   <script>
-    async function cargarYoutubers() {
-      const response = await fetch('youtubers.json');
-      const youtubersData = await response.json();
-
-      window.youtubersData = youtubersData;
-    }
-
-    async function mostrarEstadisticas() {
-      const nombre = document.getElementById("nombreYoutuber").value.toLowerCase();
-      
-      // Espera a cargar el archivo JSON con los Youtubers
-      if (!window.youtubersData) {
-        await cargarYoutubers();
+    const youtubers = {
+      "mrbeast": {
+        nombre: "MrBeast",
+        imagen: "https://yt3.googleusercontent.com/ytc/AL5GRJWdd1-MrBeast.jpg",
+        suscriptores: "210M",
+        vistas: "35B",
+        ganancias: "$54M/año"
+      },
+      "auronplay": {
+        nombre: "AuronPlay",
+        imagen: "https://yt3.googleusercontent.com/ytc/AL5GRJWKbA-AuronPlay.jpg",
+        suscriptores: "30M",
+        vistas: "7.5B",
+        ganancias: "$2M/año"
+      },
+      "rubius": {
+        nombre: "elrubiusOMG",
+        imagen: "https://yt3.googleusercontent.com/ytc/AL5GRJUYbH-Rubius.jpg",
+        suscriptores: "41M",
+        vistas: "8B",
+        ganancias: "$2.5M/año"
       }
+      // Puedes seguir agregando más youtubers aquí
+    };
 
-      const youtuber = window.youtubersData.find(y => y.nombre.toLowerCase() === nombre);
+    function buscarYoutuber() {
+      const nombre = document.getElementById("inputYoutuber").value.toLowerCase().trim();
+      const datos = youtubers[nombre];
+      const resultado = document.getElementById("resultado");
 
-      if (youtuber) {
-        document.getElementById("perfilImagen").src = youtuber.imagen;
-        document.getElementById("youtuberNombre").textContent = youtuber.nombre;
-        document.getElementById("suscriptores").textContent = "Suscriptores: " + youtuber.suscriptores;
-        document.getElementById("videos").textContent = "Videos: " + youtuber.videos;
-        document.getElementById("ganancias").textContent = "Ganancias Estimadas: " + youtuber.ganancias;
-        document.getElementById("vistas").textContent = "Vistas Totales: " + youtuber.vistas;
-        document.getElementById("descripcion").textContent = "Descripción: " + youtuber.descripcion;
-
-        document.getElementById("estados").style.display = "block";
+      if (datos) {
+        resultado.innerHTML = `
+          <h2>${datos.nombre}</h2>
+          <img src="${datos.imagen}" alt="Imagen de ${datos.nombre}">
+          <p><strong>Suscriptores:</strong> ${datos.suscriptores}</p>
+          <p><strong>Vistas Totales:</strong> ${datos.vistas}</p>
+          <p><strong>Ganancias estimadas:</strong> ${datos.ganancias}</p>
+        `;
       } else {
-        alert("Youtuber no encontrado.");
-        document.getElementById("estados").style.display = "none";
+        resultado.innerHTML = `<p>No se encontró el youtuber. Intenta con: <strong>mrbeast</strong>, <strong>auronplay</strong>, o <strong>rubius</strong>.</p>`;
       }
     }
   </script>
