@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas de Youtubers</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #2b2b2b, #1e1e1e);
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      color: #ff0000;
+      margin-top: 30px;
+      font-size: 36px;
+    }
+
+    .input-container {
+      margin: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      width: 250px;
+      border: none;
+      border-radius: 5px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #ff0000;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff3300;
+    }
+
+    .youtuber {
+      background: #292929;
+      border-radius: 12px;
+      margin: 20px;
+      padding: 20px;
+      max-width: 400px;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      display: none; /* Se oculta por defecto */
+    }
+
+    .youtuber h2 {
+      color: #ff9900;
+      font-size: 28px;
+    }
+
+    .youtuber p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #333;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    footer a {
+      color: #e1306c;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #ff66a5;
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 28px;
+      }
+
+      .youtuber {
+        width: 95%;
+      }
+
+      footer {
+        font-size: 14px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Estadísticas de Youtubers</h1>
+
+  <!-- Campo de búsqueda -->
+  <div class="input-container">
+    <input type="text" id="nombreYoutuber" placeholder="Escribe el nombre del Youtuber">
+    <button onclick="mostrarEstadisticas()">Buscar</button>
+  </div>
+
+  <!-- Estadísticas de los Youtubers -->
+  <div id="estados" class="youtuber">
+    <h2 id="youtuberNombre"></h2>
+    <p id="suscriptores"></p>
+    <p id="videos"></p>
+  </div>
+
+  <footer>
+    <p>Credits: <a href="https://instagram.com/el_wawin_" target="_blank">@el_wawin_</a></p>
+  </footer>
+
+  <script>
+    function mostrarEstadisticas() {
+      // Obtener el nombre del Youtuber que el usuario ingresa
+      const nombre = document.getElementById("nombreYoutuber").value.toLowerCase();
+      
+      // Declarar las estadísticas
+      let youtuberData = {
+        "mrbeast": {
+          nombre: "MrBeast",
+          suscriptores: "250 millones",
+          videos: "800+"
+        },
+        "auronplay": {
+          nombre: "AuronPlay",
+          suscriptores: "30 millones",
+          videos: "1.000+"
+        },
+        "pewdiepie": {
+          nombre: "PewDiePie",
+          suscriptores: "110 millones",
+          videos: "4.500+"
+        }
+      };
+
+      // Mostrar los datos del youtuber
+      if (youtuberData[nombre]) {
+        document.getElementById("youtuberNombre").textContent = youtuberData[nombre].nombre;
+        document.getElementById("suscriptores").textContent = "Suscriptores: " + youtuberData[nombre].suscriptores;
+        document.getElementById("videos").textContent = "Videos: " + youtuberData[nombre].videos;
+
+        // Mostrar la sección de estadísticas
+        document.getElementById("estados").style.display = "block";
+      } else {
+        // Si el Youtuber no está en la lista
+        alert("No tenemos estadísticas para este Youtuber.");
+        document.getElementById("estados").style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
