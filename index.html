@@ -8,7 +8,7 @@
     body {
       font-family: 'Arial', sans-serif;
       background: linear-gradient(135deg, #2b2b2b, #1e1e1e);
-      color: #ffffff;
+      color: #fff;
       margin: 0;
       padding: 0;
       text-align: center;
@@ -59,7 +59,7 @@
       margin-left: auto;
       margin-right: auto;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      display: none; /* Se oculta por defecto */
+      display: none;
     }
 
     .youtuber h2 {
@@ -91,6 +91,13 @@
 
     table td {
       background-color: #292929;
+    }
+
+    .profile-image {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 20px;
     }
 
     footer {
@@ -130,7 +137,6 @@
         font-size: 14px;
       }
     }
-
   </style>
 </head>
 <body>
@@ -144,9 +150,11 @@
 
   <!-- Estadísticas de los Youtubers -->
   <div id="estados" class="youtuber">
+    <img id="perfilImagen" class="profile-image" src="" alt="Imagen del Youtuber">
     <h2 id="youtuberNombre"></h2>
     <p id="suscriptores"></p>
     <p id="videos"></p>
+    <p id="descripcion"></p>
 
     <!-- Tabla de estadísticas -->
     <table>
@@ -170,34 +178,35 @@
   </footer>
 
   <script>
-    const apiKey = 'TU_API_KEY_DE_YOUTUBE'; // Reemplaza con tu API Key de YouTube
+    async function cargarYoutubers() {
+      const response = await fetch('youtubers.json');
+      const youtubersData = await response.json();
 
-    async function getEstadisticasDeYoutuber(nombre) {
-      const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&forUsername=${nombre}&key=${apiKey}`;
-      const respuesta = await fetch(url);
-      const data = await respuesta.json();
-      
-      if (data.items && data.items.length > 0) {
-        return data.items[0].statistics;
-      } else {
-        return null;
-      }
+      window.youtubersData = youtubersData;
     }
 
     async function mostrarEstadisticas() {
       const nombre = document.getElementById("nombreYoutuber").value.toLowerCase();
-      const stats = await getEstadisticasDeYoutuber(nombre);
+      
+      // Espera a cargar el archivo JSON con los Youtubers
+      if (!window.youtubersData) {
+        await cargarYoutubers();
+      }
 
-      if (stats) {
-        document.getElementById("youtuberNombre").textContent = nombre.charAt(0).toUpperCase() + nombre.slice(1);
-        document.getElementById("suscriptores").textContent = "Suscriptores: " + stats.subscriberCount;
-        document.getElementById("videos").textContent = "Videos: " + stats.videoCount;
-        document.getElementById("ganancias").textContent = "Ganancias Estimadas: $1,000 - $20,000/mes"; // Estimación, debe ser calculada con otra fórmula si tienes acceso
-        document.getElementById("vistas").textContent = "Vistas Totales: " + stats.viewCount;
+      const youtuber = window.youtubersData.find(y => y.nombre.toLowerCase() === nombre);
+
+      if (youtuber) {
+        document.getElementById("perfilImagen").src = youtuber.imagen;
+        document.getElementById("youtuberNombre").textContent = youtuber.nombre;
+        document.getElementById("suscriptores").textContent = "Suscriptores: " + youtuber.suscriptores;
+        document.getElementById("videos").textContent = "Videos: " + youtuber.videos;
+        document.getElementById("ganancias").textContent = "Ganancias Estimadas: " + youtuber.ganancias;
+        document.getElementById("vistas").textContent = "Vistas Totales: " + youtuber.vistas;
+        document.getElementById("descripcion").textContent = "Descripción: " + youtuber.descripcion;
 
         document.getElementById("estados").style.display = "block";
       } else {
-        alert("Youtuber no encontrado o no tiene suficientes datos.");
+        alert("Youtuber no encontrado.");
         document.getElementById("estados").style.display = "none";
       }
     }
